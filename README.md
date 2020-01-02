@@ -7,3 +7,5 @@ To run the server locally, simply run
 ```
 npm install && node index.js
 ```
+
+I have deployed it here: [https://nodeavatar.herokuapp.com/](https://nodeavatar.herokuapp.com/)
