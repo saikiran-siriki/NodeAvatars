@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Summary Report</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon" />
+</head>
+<style>
+    div.scrollmenu {
+  background-color: #333;
+  overflow: auto;
+  white-space: nowrap;
+}
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 )
+    url('loading_icon.svg')
+    50% 50%
+    no-repeat;
+}
+body.loading {
+    overflow: hidden;
+}
+body.loading .modal {
+    display: block;
+}
+
+div.scrollmenu a {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}
+
+div.scrollmenu a:hover {
+  background-color: #777;
+}
+</style>
+
+<body>
+    <div id="svgout" style="text-align:center">
+    </div>
+
+    <div class="scrollmenu">
+  
+</div>
+
+<br>
+
+    <div class="container-fluid">
+        <div class="row packs">
+            
+
+
+
+        </div>
+    </div>
+    </div>
+    <div class="modal"></div>
+    <!--     <div class="form-group">
+  <label for="sel1">Packs</label>
+  <select class="form-control" id="packs">
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+  </select>
+</div>  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    $('body').addClass('loading')
+
+
+
+    
+        $.ajax({
+        type: 'get',
+        url: '/assets?resp=packs',
+
+        success: function(data) {
+            console.log(data)
+            data = data['data']['packs']
+            console.log(data)
+            let packname_html = ``
+            for(let i=0;i<data.length;i++){
+                packname_html += `<a href="#${data[i]}" onClick='get_pack("${data[i]}")'>${data[i]}</a>`
+            }
+            $('.scrollmenu').html(packname_html)
+
+            get_pack(data[0])
+            $('body').removeClass('loading')
+
+            
+        },
+        error: function() {
+            $('body').removeClass('loading')
+
+            $('#notification-bar').text('An error occurred');
+        }
+    });
+
+
+        function get_pack(pack){
+            let current_page_url = window.location.href
+            $('body').addClass('loading')
+
+
+
+            $.ajax({
+        type: 'get',
+        url: '/packs?packname='+pack+'&'+current_page_url.split('?')[1],
+
+        success: function(data) {
+            
+            let packname_html = ``
+            for(let i=0;i<data.length;i++){
+                packname_html += `<div class="col-4 text-center" >${data[i]}</div>`
+            }
+            $('.packs').html(packname_html)
+            $('body').removeClass('loading')
+
+            
+        },
+        error: function() {
+            $('#notification-bar').text('An error occurred');
+        }
+    });
+
+        }
+
+    
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>

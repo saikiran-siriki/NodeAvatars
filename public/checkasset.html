@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary Report</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon" />
+</head>
+<style>
+    div.scrollmenu {
+  background-color: #333;
+  overflow: auto;
+  white-space: nowrap;
+}
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 )
+    url('https://i.stack.imgur.com/FhHRx.gif')
+    50% 50%
+    no-repeat;
+}
+body.loading {
+    overflow: hidden;
+}
+body.loading .modal {
+    display: block;
+}
+
+div.scrollmenu a {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}
+
+div.scrollmenu a:hover {
+  background-color: #777;
+}
+</style>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-5">
+                <p>Eyebrow</p>
+                <input type="file" name="fileToUpload" id="eyebrowupload">
+                <p>Eyes</p>
+                <input type="file" name="fileToUpload" id="eyeupload">
+                <p>Nose</p>
+                <input type="file" name="fileToUpload" id="noseupload">
+                <p>Bindi</p>
+                <input type="file" name="fileToUpload" id="bindiupload">
+                <p>Mouth</p>
+                <input type="file" name="fileToUpload" id="mouthupload">
+                <br>
+                <br>
+                <button class="btn btn-primary submit">Submit</button>
+            </div>
+        </div>
+    </div>
+    <div id="svgout" style="text-align:center">
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    var eye_prop_html = ``
+    var eyebrow_prop_html = ``
+    var nose_prop_html = ``
+    var mouth_prop_html = ``
+    var bindi_prop_html = ``
+
+    function handleFileSelect(evt) {
+        var files = evt.target.files; // FileList object
+        console.log(this.id)
+        var innerid = this.id
+
+
+        // use the 1st file from the list
+        f = files[0];
+
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                var str1 = new DOMParser().parseFromString(e.target.result, "text/html")
+                var final = ''
+
+
+                var allGs = str1.getElementsByTagName('svg');
+
+
+                var firstG = allGs[0]
+
+
+
+
+                var required_gtag = firstG.innerHTML
+                console.log(innerid)
+                if (innerid === 'eyebrowupload') {
+                    eyebrow_prop_html = required_gtag
+                } else if (innerid === 'eyeupload') {
+                    eye_prop_html = required_gtag
+                } else if (innerid === 'noseupload') {
+                    nose_prop_html = required_gtag
+                } else if (innerid === 'mouthupload') {
+                    mouth_prop_html = required_gtag
+                } else if (innerid === 'bindiupload') {
+                    bindi_prop_html = required_gtag
+                }
+                console.log(required_gtag)
+
+
+
+
+
+            };
+        })(f);
+
+        // Read in the image file as a data URL.
+        reader.readAsText(f);
+    }
+
+
+
+
+    document.getElementById('eyebrowupload').addEventListener('change', handleFileSelect, false);
+    document.getElementById('eyeupload').addEventListener('change', handleFileSelect, false);
+    document.getElementById('noseupload').addEventListener('change', handleFileSelect, false);
+    document.getElementById('mouthupload').addEventListener('change', handleFileSelect, false);
+    document.getElementById('bindiupload').addEventListener('change', handleFileSelect, false);
+
+    $('.submit').click(function() {
+        $('body').addClass('loading')
+
+        console.log('eyes', eye_prop_html)
+        console.log('eyebrow', eyebrow_prop_html)
+        console.log('nose', nose_prop_html)
+        console.log('mouth', mouth_prop_html)
+        var param_str = 'prop=eye'
+
+        if (eye_prop_html !== '') {
+            param_str += `&eye_prop_html=${encodeURIComponent(eye_prop_html)}`
+        }
+        if (eyebrow_prop_html !== '') {
+            param_str += `&eyebrow_prop_html=${encodeURIComponent(eyebrow_prop_html)}`
+        }
+        if (nose_prop_html !== '') {
+            param_str += `&nose_prop_html=${encodeURIComponent(nose_prop_html)}`
+        }
+        if (mouth_prop_html !== '') {
+            param_str += `&mouth_prop_html=${encodeURIComponent(mouth_prop_html)}`
+        }
+        if (bindi_prop_html !== '') {
+            param_str += `&bindi_prop_html=${encodeURIComponent(bindi_prop_html)}`
+        }
+
+
+        $.ajax({
+            type: 'post',
+            url: '/verify_generate',
+            data: param_str,
+            
+
+            success: function(data) {
+                $('#svgout').html(data)
+                $('body').removeClass('loading')
+
+
+
+
+            },
+            error: function() {
+                $('#notification-bar').text('An error occurred');
+            }
+        });
+
+    })
+    </script>
+</body>
+
+</html>

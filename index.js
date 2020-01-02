@@ -1,7 +1,10 @@
 const express = require("express");
 const app = express();
-const props = require('./routes/props')
-const avatar = require('./routes/avatar')
+var props = require('./routes/props')
+var avatar = require('./routes/avatar')
+var packs = require('./routes/packs')
+var assets = require('./routes/assets')
+var random = require('./routes/random')
 const bodyParser = require('body-parser');
 
 app.use(express.static("public"));
@@ -14,7 +17,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.use('/props',  props);
+app.use('/assets',  assets);
 app.use('/avatar',  avatar);
+app.use('/packs',  packs);
+app.use('/random',random)
 
 
 app.get('/', (req, res) => {
@@ -22,6 +28,12 @@ app.get('/', (req, res) => {
 })
 app.get('/createavatar', (req, res) => {
     res.render('avatar.html')
+})
+app.get('/viewpacks', (req, res) => {
+    res.render('packs.html')
+})
+app.get('/random', (req, res) => {
+    res.render('checkasset.html')
 })
 app.listen(process.env.PORT || 8000, function() {
     console.log("Server is running");
