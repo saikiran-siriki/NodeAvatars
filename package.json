@@ -1,0 +1,24 @@
+{
+  "name": "nodeavatars",
+  "version": "1.0.0",
+  "description": "Create your own avatar or emojiavatar. This is inspired from [avataars-generator](https://github.com/fangpenlin/avataaars-generator/) by [Fang-Pen Lin](https://github.com/fangpenlin)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saikiran-siriki/NodeAvatars.git"
+  },
+  "author": "saikiran-siriki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saikiran-siriki/NodeAvatars/issues"
+  },
+  "homepage": "https://github.com/saikiran-siriki/NodeAvatars#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1"
+  }
+}
