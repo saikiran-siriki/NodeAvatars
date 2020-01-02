@@ -4,7 +4,8 @@
   "description": "Create your own avatar or emojiavatar. This is inspired from [avataars-generator](https://github.com/fangpenlin/avataaars-generator/) by [Fang-Pen Lin](https://github.com/fangpenlin)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node index.js"
   },
   "repository": {
     "type": "git",
