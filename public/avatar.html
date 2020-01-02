@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary Report</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+        integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.css">
+    <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon" />
+</head>
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba(255, 255, 255, .8) url('loading_icon.svg') 50% 50% no-repeat;
+    }
+
+    body.loading {
+        overflow: hidden;
+    }
+
+    body.loading .modal {
+        display: block;
+    }
+
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #333;
+        color: white;
+        text-align: center;
+    }
+
+    div.scrollmenu {
+        background-color: #333;
+        overflow: auto;
+        white-space: nowrap;
+    }
+
+    div.scrollmenu a {
+        display: inline-block;
+        color: white;
+        text-align: center;
+        padding: 14px;
+        text-decoration: none;
+    }
+
+
+    .active {
+        background-color: #777;
+    }
+</style>
+
+<body>
+    <div id="svgout" style="text-align:center">
+    </div>
+
+    <br>
+    <div class="scrollmenu">
+        <a href="#skincolor" class="active" id="skincolor" onClick='load_color_items("skincolor")'>Skincolor</a>
+        <a href="#hairstyle" id="hairstyle" onClick='load_prop_items("hairstyle")'>Hair</a>
+        <a href="#haircolor" id="haircolor" onClick='load_color_items("haircolor")'>Haircolor</a>
+        <a href="#bindi" id="bindi" onClick='load_prop_items("bindi")'>Bindi</a>
+        <!-- <a href="#eyebrow" onClick='load_prop_items("eyebrow")'>Eyebrow</a> -->
+        <a href="#facialhair" id="facialhair" onClick='load_prop_items("facialhair")' id="facialhair">Facialhair</a>
+
+    </div>
+    <br>
+    <div class="container-fluid">
+        <div class="proptype">
+        </div>
+    </div>
+    <div class="footer">
+        <p style="margin-top:10px" onClick="generate_packs()">Done</p>
+    </div>
+    </div>
+    <div class="modal"></div>
+    <!--     <div class="form-group">
+  <label for="sel1">Packs</label>
+  <select class="form-control" id="packs">
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+  </select>
+</div>  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+        integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.js"></script>
+    <script type="text/javascript">
+        console.log('hello')
+        let haircolor = 'A55728'
+        let skincolor = 'FD9841'
+        // let hairstyle = 'longhairfroband'
+        let eyebrow = 'flat_natural'
+        let eyeware = ''
+        let bindi = ''
+        let facialhair = ''
+        let current_prop = 'skincolor'
+        const current_page_url = window.location.href
+        const gender = current_page_url.split('gender=')[1].split('#')[0]
+        if (gender === 'female') {
+            var hairstyle = 'longhairbighair'
+            $('#facialhair').hide()
+        }
+        else {
+
+            $('#bindi').hide()
+            var hairstyle = 'shorthairdreads01'
+        }
+
+        function load_prop_items(prop) {
+            current_prop = prop
+            $(".scrollmenu>a.active").removeClass("active");
+            $('#' + prop).addClass('active')
+            $('body').addClass('loading')
+            if (prop === 'hairstyle') {
+                prop = gender + 'hairstyle'
+            }
+            $.ajax({
+                type: 'get',
+                url: '/props?resp=' + prop + '&gender=' + gender,
+
+                success: function (data) {
+                    console.log(data[0]['prop'])
+                    var prop_html = `<div class="row">`
+                    for (var i = 0; i < data.length; i++) {
+                        console.log(data[i]['prop'])
+                        prop_html += `<div class="col-3 text-center" onClick="svgupdate('${data[i]['prop']}')">${data[i]['svg']}</div>`
+
+
+                    }
+                    prop_html += `</div>`
+
+                    $('.proptype').html(prop_html)
+                    $('body').removeClass('loading')
+
+                },
+                error: function () {
+                    $('#notification-bar').text('An error occurred');
+                }
+            });
+        }
+
+        function next_tab(prop) {
+            if (prop === 'skincolor') {
+                $(".scrollmenu>a.active").removeClass("active");
+                $('#hairstyle').trigger('click')
+
+            }
+            if (prop === 'hairstyle') {
+                $(".scrollmenu>a.active").removeClass("active");
+                $('#haircolor').trigger('click')
+            }
+            if (prop === 'haircolor') {
+                $(".scrollmenu>a.active").removeClass("active");
+                $('#eyeware').trigger('click')
+            }
+            if (prop === 'bindi') {
+                if (gender === "female") {
+                    $(".scrollmenu>a.active").removeClass("active");
+                    $('#generate').trigger('click')
+                }
+                else {
+                    $(".scrollmenu>a.active").removeClass("active");
+                    $('#facialhair').trigger('click')
+                }
+
+            }
+            if (prop === 'facialhair') {
+                $(".scrollmenu>a.active").removeClass("active");
+                $('#generate').trigger('click')
+            }
+
+
+        }
+
+        function load_color_items(prop) {
+            current_prop = prop
+            $(".scrollmenu>a.active").removeClass("active");
+            $('#' + prop).addClass('active')
+            $('body').addClass('loading')
+            $.ajax({
+                type: 'get',
+                url: '/props?resp=' + prop,
+
+                success: function (data) {
+                    console.log(data[0])
+                    var color_html = `<div class="row">`
+                    for (var i = 0; i < data.length; i++) {
+                        color_html += `<div class="col-2"><div class="circle" onClick="svgupdate('${data[i]['color']}')" style="background: #${data[i]['color']};
+                            width: 40px;
+                            height: 40px;
+                            margin-bottom:10px;
+                            border-radius: 50%;"></div></div>`
+                    }
+                    color_html += `</div>`
+                    $('.proptype').html(color_html)
+                    $('body').removeClass('loading')
+
+                },
+                error: function () {
+                    $('body').removeClass('loading')
+                    $('#notification-bar').text('An error occurred');
+                }
+            });
+
+        }
+
+
+
+        function get_packs() {
+            let url = `/viewpacks?hairstyle=${hairstyle}&haircolor=${haircolor}&gender=${gender}&skincolor=${skincolor}&eyebrow=${eyebrow}&facialhair=${facialhair}&bindi=${bindi}`
+            window.open(url, '_blank');
+        }
+
+        $('#skincolor').trigger('click')
+
+
+        function svgupdate(prop) {
+            console.log($('#skincolor').val(), $('#hair').val(), $('#haircolor').val())
+            if (current_prop === 'hairstyle') {
+                hairstyle = prop
+            }
+            if (current_prop === 'eyebrow') {
+                eyebrow = prop
+            }
+            if (current_prop === 'eyeware') {
+                eyeware = prop
+            }
+            if (current_prop === 'haircolor') {
+                haircolor = prop
+            }
+            if (current_prop === 'skincolor') {
+                skincolor = prop
+            }
+            if (current_prop === 'facialhair') {
+                facialhair = prop
+            }
+            if (current_prop === 'bindi') {
+                bindi = prop
+            }
+            console.log(`/avatar?hairstyle=${hairstyle}&gender=${gender}&haircolor=${haircolor}&skincolor=${skincolor}&eyebrow=${eyebrow}&eyeware=${eyeware}&facialhair=${facialhair}&bindi=${bindi}`)
+            $('body').addClass('loading')
+
+            $.ajax({
+                type: 'get',
+                url: `/avatar?hairstyle=${hairstyle}&gender=${gender}&haircolor=${haircolor}&skincolor=${skincolor}&eyebrow=${eyebrow}&eyeware=${eyeware}&facialhair=${facialhair}&bindi=${bindi}`,
+
+                success: function (data) {
+
+                    $('#svgout').html(data)
+                    $('body').removeClass('loading')
+                },
+                error: function () {
+                    $('body').removeClass('loading')
+                    $('#notification-bar').text('An error occurred');
+                }
+            });
+        }
+        function generate_packs() {
+            Swal.fire({
+                title: `Are you sure you sure you want to create packs with the selected avatar?`,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `Yes`
+            }).then((result) => {
+                console.log(result.value)
+                if (result.value) {
+                    get_packs()
+                }
+            })
+        }
+
+        svgupdate('FD9841')
+    </script>
+</body>
+
+</html>
